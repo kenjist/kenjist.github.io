@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NihongoMatch</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+    <!-- SheetJS for Excel reading -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title"><span class="kanji-accent">日本語</span> NihongoMatch</h1>
+            <p class="subtitle">Desafio de Associação</p>
+        </header>
+
+        <!-- Setup Screen -->
+        <div id="setup-screen" class="screen active">
+            <div class="glass-card mb-4">
+                <h2 class="section-title">Base de Dados</h2>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="file-upload" accept=".xlsx, .xls, .csv" class="file-input">
+                    <label for="file-upload" class="file-label">
+                        <span class="material-symbols-outlined">upload_file</span>
+                        <span id="file-name">Carregar Planilha Excel</span>
+                    </label>
+                </div>
+                <p id="db-status" class="status-text mt-2">Nenhuma base carregada</p>
+            </div>
+
+            <div class="glass-card mb-4">
+                <h2 class="section-title">Configurações do Desafio</h2>
+                
+                <div class="input-group">
+                    <label>Filtrar por Tipo</label>
+                    <select id="filter-type" class="select-field">
+                        <option value="todos">Todos (Ambos)</option>
+                        <option value="palavra">Apenas Palavras</option>
+                        <option value="frase">Apenas Frases</option>
+                    </select>
+                </div>
+
+                <div class="flex-row gap-4">
+                    <div class="input-group" style="flex: 1;">
+                        <label>Coluna Esquerda</label>
+                        <select id="left-column" class="select-field">
+                            <option value="Original">Original (Kanji/Kana)</option>
+                            <option value="Romaji">Romaji</option>
+                            <option value="Portugues">Português</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Coluna Direita</label>
+                        <select id="right-column" class="select-field">
+                            <option value="Portugues">Português</option>
+                            <option value="Romaji">Romaji</option>
+                            <option value="Original">Original (Kanji/Kana)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-start" class="btn-primary" disabled>
+                <span class="material-symbols-outlined">play_arrow</span> Começar Desafio
+            </button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="scoreboard glass-card mb-4">
+                <div class="score-item">
+                    <span class="score-label">Tempo</span>
+                    <span id="live-time" class="score-value">00:00</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Total</span>
+                    <span id="score-total" class="score-value">0</span>
+                </div>
+                <div class="score-item correct">
+                    <span class="score-label">Acertos</span>
+                    <span id="score-correct" class="score-value">0</span>
+                </div>
+                <div class="score-item error">
+                    <span class="score-label">Erros</span>
+                    <span id="score-error" class="score-value">0</span>
+                </div>
+            </div>
+
+            <div class="flex-row gap-4 mb-4">
+                <button class="btn-secondary" onclick="goSetup()" style="flex: 1; padding: 0.8rem; font-size: 1rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">arrow_back</span> Tela Inicial
+                </button>
+                <button class="btn-primary" onclick="restartGame()" style="flex: 1; padding: 0.8rem; font-size: 1rem; box-shadow: none;">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">refresh</span> Recomeçar
+                </button>
+            </div>
+
+            <div class="game-board">
+                <div class="column" id="col-left">
+                    <!-- Left items generated via JS -->
+                </div>
+                <div class="column" id="col-right">
+                    <!-- Right items generated via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="result-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-icon">
+                <span class="material-symbols-outlined">emoji_events</span>
+            </div>
+            <h2 class="modal-title">Fim de Jogo!</h2>
+            
+            <div class="final-stats">
+                <p>Itens totais: <strong id="final-total">0</strong></p>
+                <p>Tempo: <strong id="final-time">00:00</strong></p>
+                <p class="text-success">Acertos: <strong id="final-correct">0</strong></p>
+                <p class="text-danger">Erros: <strong id="final-error">0</strong></p>
+                
+                <div class="accuracy-circle mt-4 mb-4">
+                    <span id="final-accuracy">100%</span>
+                    <small>Precisão</small>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="restartGame()">
+                <span class="material-symbols-outlined">refresh</span> Começar Novamente
+            </button>
+            <button class="btn-secondary mt-2" onclick="goSetup()">
+                <span class="material-symbols-outlined">settings</span> Alterar Configurações
+            </button>
+        </div>
+    </div>
+
+    <script src="js/app.js?v=6"></script>
+</body>
+</html>
