@@ -24,7 +24,42 @@ document.addEventListener('DOMContentLoaded', () => {
     
     fileInput.addEventListener('change', handleFileUpload);
     btnStart.addEventListener('click', startGame);
+
+    const leftSelect = document.getElementById('left-column');
+    const rightSelect = document.getElementById('right-column');
+    leftSelect.addEventListener('change', updateColumnsOptions);
+    rightSelect.addEventListener('change', updateColumnsOptions);
+    updateColumnsOptions();
 });
+
+function updateColumnsOptions() {
+    const leftSelect = document.getElementById('left-column');
+    const rightSelect = document.getElementById('right-column');
+    
+    const leftValue = leftSelect.value;
+    const rightValue = rightSelect.value;
+    
+    Array.from(leftSelect.options).forEach(opt => {
+        opt.disabled = false;
+        opt.style.display = '';
+    });
+    Array.from(rightSelect.options).forEach(opt => {
+        opt.disabled = false;
+        opt.style.display = '';
+    });
+    
+    const optInRight = Array.from(rightSelect.options).find(opt => opt.value === leftValue);
+    if (optInRight) {
+        optInRight.disabled = true;
+        optInRight.style.display = 'none';
+    }
+    
+    const optInLeft = Array.from(leftSelect.options).find(opt => opt.value === rightValue);
+    if (optInLeft) {
+        optInLeft.disabled = true;
+        optInLeft.style.display = 'none';
+    }
+}
 
 // --- Database Logic ---
 function loadDatabaseFromStorage() {
@@ -104,6 +139,7 @@ function startGame() {
     const filterType = document.getElementById('filter-type').value;
     const colLeftType = document.getElementById('left-column').value.toLowerCase();
     const colRightType = document.getElementById('right-column').value.toLowerCase();
+    const itemCountStr = document.getElementById('item-count').value;
 
     // Filter DB
     if (filterType === 'todos') {
@@ -115,6 +151,15 @@ function startGame() {
     if (currentChallenge.length === 0) {
         alert("Nenhum item encontrado com esse filtro.");
         return;
+    }
+
+    // Shuffle and slice based on itemCount
+    currentChallenge = shuffleArray(currentChallenge);
+    if (itemCountStr !== 'todos') {
+        const count = parseInt(itemCountStr, 10);
+        if (currentChallenge.length > count) {
+            currentChallenge = currentChallenge.slice(0, count);
+        }
     }
 
     // Reset State

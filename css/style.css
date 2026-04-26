@@ -199,6 +199,16 @@ body {
     background: rgba(255,255,255,0.05);
 }
 
+.btn-dark-gray {
+    background: #2a2d35;
+    color: var(--text-main);
+    border: 1px solid #40444f;
+}
+
+.btn-dark-gray:hover {
+    background: #363a45;
+}
+
 /* Screens */
 .screen {
     display: none;

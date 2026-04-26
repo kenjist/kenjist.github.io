@@ -42,13 +42,25 @@
             <div class="glass-card mb-4">
                 <h2 class="section-title">Configurações do Desafio</h2>
                 
-                <div class="input-group">
-                    <label>Filtrar por Tipo</label>
-                    <select id="filter-type" class="select-field">
-                        <option value="todos">Todos (Ambos)</option>
-                        <option value="palavra">Apenas Palavras</option>
-                        <option value="frase">Apenas Frases</option>
-                    </select>
+                <div class="flex-row gap-4">
+                    <div class="input-group" style="flex: 1;">
+                        <label>Filtrar por Tipo</label>
+                        <select id="filter-type" class="select-field">
+                            <option value="todos">Todos (Ambos)</option>
+                            <option value="palavra">Apenas Palavras</option>
+                            <option value="frase">Apenas Frases</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Quantidade de Itens</label>
+                        <select id="item-count" class="select-field">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="todos">Todos</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="flex-row gap-4">
@@ -74,6 +86,9 @@
             <button id="btn-start" class="btn-primary" disabled>
                 <span class="material-symbols-outlined">play_arrow</span> Começar Desafio
             </button>
+            <div class="footer-credit mt-4" style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                Desenvolvido por Wagner Kenji Sato
+            </div>
         </div>
 
         <!-- Game Screen -->
@@ -98,7 +113,7 @@
             </div>
 
             <div class="flex-row gap-4 mb-4">
-                <button class="btn-secondary" onclick="goSetup()" style="flex: 1; padding: 0.8rem; font-size: 1rem;">
+                <button class="btn-secondary btn-dark-gray" onclick="goSetup()" style="flex: 1; padding: 0.8rem; font-size: 1rem;">
                     <span class="material-symbols-outlined" style="font-size: 1.2rem;">arrow_back</span> Tela Inicial
                 </button>
                 <button class="btn-primary" onclick="restartGame()" style="flex: 1; padding: 0.8rem; font-size: 1rem; box-shadow: none;">
