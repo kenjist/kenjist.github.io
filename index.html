@@ -27,20 +27,39 @@
 
         <!-- Setup Screen -->
         <div id="setup-screen" class="screen active">
-            <div class="glass-card mb-4">
-                <h2 class="section-title">Base de Dados</h2>
-                <div class="file-upload-wrapper">
-                    <input type="file" id="file-upload" accept=".xlsx, .xls, .csv" class="file-input">
-                    <label for="file-upload" class="file-label">
-                        <span class="material-symbols-outlined">upload_file</span>
-                        <span id="file-name">Carregar Planilha Excel</span>
-                    </label>
+            <div class="flex-row gap-4 mb-4" style="align-items: stretch;">
+                <div class="glass-card" style="flex: 1; margin-bottom: 0;">
+                    <h2 class="section-title">Base de Dados</h2>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="file-upload" accept=".xlsx, .xls, .csv" class="file-input">
+                        <label for="file-upload" class="file-label">
+                            <span class="material-symbols-outlined">upload_file</span>
+                            <span id="file-name">Carregar Planilha Excel</span>
+                        </label>
+                    </div>
+                    <p id="db-status" class="status-text mt-2">Nenhuma base carregada</p>
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <a href="template.csv" download="template_nihongomatch.csv" class="btn-secondary" style="display: inline-flex; width: auto; padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none;">
+                            <span class="material-symbols-outlined" style="font-size: 1rem;">download</span> Baixar arquivo template
+                        </a>
+                    </div>
                 </div>
-                <p id="db-status" class="status-text mt-2">Nenhuma base carregada</p>
-                <div style="text-align: center; margin-top: 1rem;">
-                    <a href="template.csv" download="template_nihongomatch.csv" class="btn-secondary" style="display: inline-flex; width: auto; padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none;">
-                        <span class="material-symbols-outlined" style="font-size: 1rem;">download</span> Baixar arquivo template
-                    </a>
+                <div class="glass-card" style="flex: 1; margin-bottom: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="modal-icon" style="margin-bottom: 0.5rem; width: 60px; height: 60px; display: inline-flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined" style="font-size: 30px;">timer</span>
+                    </div>
+                    <h2 class="section-title" style="margin-bottom: 0;">Melhores Tempos</h2>
+                    <div style="font-size: 0.95rem; margin-top: 0.5rem; text-align: left; width: 100%; max-width: 200px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.2rem;">
+                            <span>Todos:</span> <strong id="best-time-todos" style="color: var(--success);">--:--</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.2rem;">
+                            <span>Palavras:</span> <strong id="best-time-palavra" style="color: var(--success);">--:--</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Frases:</span> <strong id="best-time-frase" style="color: var(--success);">--:--</strong>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -102,6 +121,10 @@
                 <div class="score-item">
                     <span class="score-label">Tempo</span>
                     <span id="live-time" class="score-value">00:00</span>
+                </div>
+                <div class="score-item" style="color: var(--success);">
+                    <span class="score-label">Melhor</span>
+                    <span id="best-time" class="score-value">--:--</span>
                 </div>
                 <div class="score-item">
                     <span class="score-label">Total</span>

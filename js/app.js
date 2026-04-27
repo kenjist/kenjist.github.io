@@ -8,6 +8,37 @@ let timerInterval = null;
 let leftSelected = null; // { id, element }
 let rightSelected = null; // { id, element }
 
+let currentFilterType = 'todos';
+
+function formatTime(secs) {
+    if (secs === null || secs === undefined) return "--:--";
+    const s = parseInt(secs, 10);
+    const m = Math.floor(s / 60).toString().padStart(2, '0');
+    const rs = (s % 60).toString().padStart(2, '0');
+    return `${m}:${rs}`;
+}
+
+function updateBestTimeDisplay() {
+    const todosTime = localStorage.getItem('nihongoMatchBestTime_todos');
+    const palavraTime = localStorage.getItem('nihongoMatchBestTime_palavra');
+    const fraseTime = localStorage.getItem('nihongoMatchBestTime_frase');
+
+    const homeTodos = document.getElementById('best-time-todos');
+    if (homeTodos) homeTodos.innerText = formatTime(todosTime);
+    
+    const homePalavra = document.getElementById('best-time-palavra');
+    if (homePalavra) homePalavra.innerText = formatTime(palavraTime);
+    
+    const homeFrase = document.getElementById('best-time-frase');
+    if (homeFrase) homeFrase.innerText = formatTime(fraseTime);
+
+    const gameEl = document.getElementById('best-time');
+    if (gameEl) {
+        const currentTime = localStorage.getItem(`nihongoMatchBestTime_${currentFilterType}`);
+        gameEl.innerText = formatTime(currentTime);
+    }
+}
+
 // --- DOM Elements ---
 const screens = {
     setup: document.getElementById('setup-screen'),
@@ -20,6 +51,7 @@ const fileInput = document.getElementById('file-upload');
 
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
+    updateBestTimeDisplay();
     loadDatabaseFromStorage();
     
     fileInput.addEventListener('change', handleFileUpload);
@@ -140,6 +172,9 @@ function startGame() {
     const colLeftType = document.getElementById('left-column').value.toLowerCase();
     const colRightType = document.getElementById('right-column').value.toLowerCase();
     const itemCountStr = document.getElementById('item-count').value;
+
+    currentFilterType = filterType;
+    updateBestTimeDisplay();
 
     // Filter DB
     if (filterType === 'todos') {
@@ -305,6 +340,17 @@ function updateScoreBoard() {
 function checkWinCondition() {
     if (score.matchedPairs === score.total) {
         clearInterval(timerInterval);
+        
+        const timeElapsedSecs = Math.floor((Date.now() - gameStartTime) / 1000);
+        
+        const bestKey = `nihongoMatchBestTime_${currentFilterType}`;
+        const storedBest = localStorage.getItem(bestKey);
+        
+        if (storedBest === null || timeElapsedSecs < parseInt(storedBest, 10)) {
+            localStorage.setItem(bestKey, timeElapsedSecs);
+            updateBestTimeDisplay();
+        }
+
         setTimeout(showResultModal, 600);
     }
 }
