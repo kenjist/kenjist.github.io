@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,111 +8,331 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet" />
 
     <!-- SheetJS for Excel reading -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Header -->
         <header class="header">
             <h1 class="title"><span class="kanji-accent">日本語</span> NihongoMatch</h1>
-            <p class="subtitle">Desafio de Associação</p>
+            <p id="app-subtitle" class="subtitle"></p>
         </header>
 
-        <!-- Setup Screen -->
-        <div id="setup-screen" class="screen active">
-            <div class="flex-row gap-4 mb-4" style="align-items: stretch;">
-                <div class="glass-card" style="flex: 1; margin-bottom: 0;">
-                    <h2 class="section-title">Base de Dados</h2>
-                    <div class="file-upload-wrapper">
-                        <input type="file" id="file-upload" accept=".xlsx, .xls, .csv" class="file-input">
-                        <label for="file-upload" class="file-label">
-                            <span class="material-symbols-outlined">upload_file</span>
-                            <span id="file-name">Carregar Planilha Excel</span>
-                        </label>
+        <!-- Main Menu Screen -->
+        <div id="main-menu-screen" class="screen active">
+            <div class="menu-buttons mb-4">
+                <button class="btn-primary menu-btn-square" onclick="showAssociationSetup()" id="btn-menu-association"
+                    disabled>
+                    <span class="material-symbols-outlined">extension</span>
+                    <div class="btn-titles-wrapper">
+                        <span class="btn-jp-title">翻訳マッチ</span>
+                        <span class="btn-romaji-title">Honyaku Match</span>
                     </div>
-                    <p id="db-status" class="status-text mt-2">Nenhuma base carregada</p>
-                    <div style="text-align: center; margin-top: 1rem;">
-                        <a href="template.csv" download="template_nihongomatch.csv" class="btn-secondary" style="display: inline-flex; width: auto; padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none;">
-                            <span class="material-symbols-outlined" style="font-size: 1rem;">download</span> Baixar arquivo template
-                        </a>
+                    <span class="btn-sub-title">Encontre seus pares!</span>
+                </button>
+                <button class="btn-primary menu-btn-square" onclick="showTranslationSetup('max')"
+                    id="btn-menu-trans-max" disabled>
+                    <span class="material-symbols-outlined">timer</span>
+                    <div class="btn-titles-wrapper">
+                        <span class="btn-jp-title">翻訳マラソン</span>
+                        <span class="btn-romaji-title">Honyaku Marathon</span>
                     </div>
-                </div>
-                <div class="glass-card" style="flex: 1; margin-bottom: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                    <div class="modal-icon" style="margin-bottom: 0.5rem; width: 60px; height: 60px; display: inline-flex; align-items: center; justify-content: center;">
-                        <span class="material-symbols-outlined" style="font-size: 30px;">timer</span>
+                    <span class="btn-sub-title">Traduza o máximo que der!</span>
+                </button>
+                <button class="btn-primary menu-btn-square" onclick="showTranslationSetup('fast')"
+                    id="btn-menu-trans-fast" disabled>
+                    <span class="material-symbols-outlined">speed</span>
+                    <div class="btn-titles-wrapper">
+                        <span class="btn-jp-title">翻訳スピード</span>
+                        <span class="btn-romaji-title">Honyaku Speed</span>
                     </div>
-                    <h2 class="section-title" style="margin-bottom: 0;">Melhores Tempos</h2>
-                    <div style="font-size: 0.95rem; margin-top: 0.5rem; text-align: left; width: 100%; max-width: 200px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.2rem;">
-                            <span>Todos:</span> <strong id="best-time-todos" style="color: var(--success);">--:--</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.2rem;">
-                            <span>Palavras:</span> <strong id="best-time-palavra" style="color: var(--success);">--:--</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>Frases:</span> <strong id="best-time-frase" style="color: var(--success);">--:--</strong>
-                        </div>
-                    </div>
-                </div>
+                    <span class="btn-sub-title">Traduza o mais rápido possível!</span>
+                </button>
             </div>
 
             <div class="glass-card mb-4">
-                <h2 class="section-title">Configurações do Desafio</h2>
-                
-                <div class="flex-row gap-4">
-                    <div class="input-group" style="flex: 1;">
-                        <label>Filtrar por Tipo</label>
-                        <select id="filter-type" class="select-field">
-                            <option value="todos">Todos (Ambos)</option>
-                            <option value="palavra">Apenas Palavras</option>
-                            <option value="frase">Apenas Frases</option>
-                        </select>
+                <h2 class="section-title" style="text-align: center;">Base de Dados</h2>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="file-upload" accept=".xlsx, .xls, .csv" class="file-input">
+                    <label for="file-upload" class="file-label">
+                        <span class="material-symbols-outlined">upload_file</span>
+                        <span id="file-name">Carregar Planilha Excel</span>
+                    </label>
+                </div>
+                <p id="db-status" class="status-text mt-2">Nenhuma base carregada</p>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <a href="template.csv" download="template_nihongomatch.csv" class="btn-secondary"
+                        style="display: inline-flex; width: auto; padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none;">
+                        <span class="material-symbols-outlined" style="font-size: 1rem;">download</span> Baixar arquivo
+                        template
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-credit mt-4" style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                Desenvolvido por Wagner Kenji Sato. Versão Beta
+            </div>
+        </div>
+
+        <!-- Setup Screen: Association -->
+        <div id="setup-association-screen" class="screen">
+            <div class="flex-row gap-4 mb-4" style="align-items: stretch;">
+                <!-- Config -->
+                <div class="glass-card flex-70">
+                    <h2 class="section-title">Configurações do Desafio</h2>
+
+                    <div class="flex-row gap-4">
+                        <div class="input-group" style="flex: 1;">
+                            <label>Filtrar por Tipo</label>
+                            <select id="filter-type" class="select-field">
+                                <option value="todos">Todos (Ambos)</option>
+                                <option value="palavra">Apenas Palavras</option>
+                                <option value="frase">Apenas Frases</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label>Quantidade de Itens</label>
+                            <select id="item-count" class="select-field">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="todos" selected>Todos</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="input-group" style="flex: 1;">
-                        <label>Quantidade de Itens</label>
-                        <select id="item-count" class="select-field">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                            <option value="todos" selected>Todos</option>
-                        </select>
+
+                    <div class="flex-row gap-4">
+                        <div class="input-group" style="flex: 1;">
+                            <label>Coluna Esquerda</label>
+                            <select id="left-column" class="select-field">
+                                <option value="Original">Original (Kanji/Kana)</option>
+                                <option value="Romaji">Romaji</option>
+                                <option value="Portugues">Português</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label>Coluna Direita</label>
+                            <select id="right-column" class="select-field">
+                                <option value="Portugues">Português</option>
+                                <option value="Romaji">Romaji</option>
+                                <option value="Original">Original (Kanji/Kana)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex-row gap-4">
-                    <div class="input-group" style="flex: 1;">
-                        <label>Coluna Esquerda</label>
-                        <select id="left-column" class="select-field">
-                            <option value="Original">Original (Kanji/Kana)</option>
-                            <option value="Romaji">Romaji</option>
-                            <option value="Portugues">Português</option>
-                        </select>
+                <!-- Best times -->
+                <div class="glass-card flex-30"
+                    style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="modal-icon"
+                        style="margin-bottom: 0.5rem; width: 60px; height: 60px; display: inline-flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined" style="font-size: 30px;">timer</span>
                     </div>
-                    <div class="input-group" style="flex: 1;">
-                        <label>Coluna Direita</label>
-                        <select id="right-column" class="select-field">
-                            <option value="Portugues">Português</option>
-                            <option value="Romaji">Romaji</option>
-                            <option value="Original">Original (Kanji/Kana)</option>
-                        </select>
+                    <h2 class="section-title" style="margin-bottom: 0;">Melhores Tempos</h2>
+                    <div
+                        style="font-size: 0.95rem; margin-top: 0.5rem; text-align: left; width: 100%; max-width: 200px;">
+                        <div id="assoc-record-row-todos"
+                            style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; transition: opacity 0.3s;">
+                            <span>Todos:</span> <strong id="best-time-todos"
+                                style="color: var(--success);">--:--</strong>
+                        </div>
+                        <div id="assoc-record-row-palavra"
+                            style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; transition: opacity 0.3s;">
+                            <span>Palavras:</span> <strong id="best-time-palavra"
+                                style="color: var(--success);">--:--</strong>
+                        </div>
+                        <div id="assoc-record-row-frase"
+                            style="display: flex; justify-content: space-between; transition: opacity 0.3s;">
+                            <span>Frases:</span> <strong id="best-time-frase"
+                                style="color: var(--success);">--:--</strong>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <button id="btn-start" class="btn-primary" disabled>
-                <span class="material-symbols-outlined">play_arrow</span> Começar Desafio
-            </button>
-            <div class="footer-credit mt-4" style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
-                Desenvolvido por Wagner Kenji Sato
+            <div class="flex-row gap-4 mb-4">
+                <button class="btn-secondary btn-dark-gray" onclick="showMainMenu()" style="flex: 1;">
+                    <span class="material-symbols-outlined">home</span> Menu Principal
+                </button>
+                <button id="btn-start" class="btn-primary" style="flex: 1;">
+                    <span class="material-symbols-outlined">play_arrow</span> Começar Desafio
+                </button>
+            </div>
+        </div>
+
+        <!-- Setup Screen: Translation -->
+        <div id="setup-translation-screen" class="screen">
+            <div class="flex-row gap-4 mb-4" style="align-items: stretch;">
+                <!-- Config -->
+                <div class="glass-card flex-70">
+                    <h2 class="section-title">Configurações do Desafio</h2>
+
+                    <div class="flex-row gap-4">
+                        <div class="input-group" style="flex: 1;">
+                            <label>Filtrar por Tipo</label>
+                            <select id="trans-filter-type" class="select-field">
+                                <option value="todos">Todos (Ambos)</option>
+                                <option value="palavra">Apenas Palavras</option>
+                                <option value="frase">Apenas Frases</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label id="trans-time-label">Duração do Desafio</label>
+                            <select id="trans-duration" class="select-field">
+                                <option value="1">1 minuto</option>
+                                <option value="5" selected>5 minutos</option>
+                                <option value="10">10 minutos</option>
+                                <option value="15">15 minutos</option>
+                                <option value="20">20 minutos</option>
+                            </select>
+                            <select id="trans-max-time" class="select-field" style="display: none;">
+                                <option value="5">5 segundos</option>
+                                <option value="10">10 segundos</option>
+                                <option value="15">15 segundos</option>
+                                <option value="30">30 segundos</option>
+                                <option value="0" selected>Sem limite</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex-row gap-4" id="trans-item-count-row" style="display: none;">
+                        <div class="input-group" style="flex: 1;">
+                            <label>Quantidade de Itens</label>
+                            <select id="trans-item-count" class="select-field">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="todos" selected>Todos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex-row gap-4">
+                        <div class="input-group" style="flex: 1;">
+                            <label>O que será exibido</label>
+                            <select id="trans-left-column" class="select-field">
+                                <option value="Original">Original (Kanji/Kana)</option>
+                                <option value="Romaji">Romaji</option>
+                                <option value="Portugues">Português</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label>O que será digitado</label>
+                            <select id="trans-right-column" class="select-field">
+                                <option value="Portugues">Português</option>
+                                <option value="Romaji">Romaji</option>
+                                <option value="Original">Original (Kanji/Kana)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Best times -->
+                <div class="glass-card flex-30"
+                    style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="modal-icon"
+                        style="margin-bottom: 0.5rem; width: 60px; height: 60px; display: inline-flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined" style="font-size: 30px;">star</span>
+                    </div>
+                    <h2 class="section-title" id="trans-record-title" style="margin-bottom: 0;">Recorde de Acertos</h2>
+                    <div
+                        style="font-size: 0.95rem; margin-top: 0.5rem; text-align: left; width: 100%; max-width: 200px;">
+                        <div id="trans-record-row-todos"
+                            style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.2rem; transition: opacity 0.3s;">
+                            <span>Todos:</span> <strong id="trans-best-todos" style="color: var(--success);">0</strong>
+                        </div>
+                        <div id="trans-record-row-palavra"
+                            style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.2rem; transition: opacity 0.3s;">
+                            <span>Palavras:</span> <strong id="trans-best-palavra"
+                                style="color: var(--success);">0</strong>
+                        </div>
+                        <div id="trans-record-row-frase"
+                            style="display: flex; justify-content: space-between; transition: opacity 0.3s;">
+                            <span>Frases:</span> <strong id="trans-best-frase" style="color: var(--success);">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-row gap-4 mb-4">
+                <button class="btn-secondary btn-dark-gray" onclick="showMainMenu()" style="flex: 1;">
+                    <span class="material-symbols-outlined">home</span> Menu Principal
+                </button>
+                <button id="btn-start-trans" class="btn-primary" style="flex: 1;">
+                    <span class="material-symbols-outlined">play_arrow</span> Começar Desafio
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Screen: Translation -->
+        <div id="game-translation-screen" class="screen">
+            <div class="scoreboard glass-card mb-4">
+                <div class="score-item">
+                    <span class="score-label">Tempo</span>
+                    <span id="trans-live-time" class="score-value">00:00</span>
+                </div>
+                <div class="score-item" style="color: var(--success);">
+                    <span class="score-label">Recorde</span>
+                    <span id="trans-best" class="score-value">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Total</span>
+                    <span id="trans-score-total" class="score-value">0</span>
+                </div>
+                <div class="score-item correct">
+                    <span class="score-label">Acertos</span>
+                    <span id="trans-score-correct" class="score-value">0</span>
+                </div>
+                <div class="score-item error">
+                    <span class="score-label">Erros</span>
+                    <span id="trans-score-error" class="score-value">0</span>
+                </div>
+            </div>
+
+            <div class="flex-row gap-4 mb-4">
+                <button class="btn-secondary btn-dark-gray" onclick="showMainMenu()"
+                    style="flex: 1; padding: 0.8rem; font-size: 1rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">home</span> Menu Principal
+                </button>
+                <button class="btn-secondary btn-dark-gray" onclick="showTranslationSetup(currentTransSubMode)"
+                    style="flex: 1; padding: 0.8rem; font-size: 1rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">settings</span> Configurações
+                </button>
+                <button class="btn-primary" onclick="restartTranslationGame()"
+                    style="flex: 1; padding: 0.8rem; font-size: 1rem; box-shadow: none;">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">refresh</span> Recomeçar
+                </button>
+            </div>
+
+            <div class="translation-board">
+                <div id="trans-display" class="translation-display">
+                    <!-- Word goes here -->
+                </div>
+                <div id="trans-item-timer-container"
+                    style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 1rem; overflow: hidden; display: none;">
+                    <div id="trans-item-timer-bar"
+                        style="height: 100%; background: var(--primary); width: 100%; transition: width 1s linear;">
+                    </div>
+                </div>
+                <input type="text" id="trans-input" class="translation-input" placeholder="Digite sua resposta aqui..."
+                    autocomplete="off">
+                <button id="btn-trans-submit" class="btn-primary">
+                    <span class="material-symbols-outlined">send</span> Enviar Resposta
+                </button>
             </div>
         </div>
 
@@ -141,10 +362,16 @@
             </div>
 
             <div class="flex-row gap-4 mb-4">
-                <button class="btn-secondary btn-dark-gray" onclick="goSetup()" style="flex: 1; padding: 0.8rem; font-size: 1rem;">
-                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">arrow_back</span> Tela Inicial
+                <button class="btn-secondary btn-dark-gray" onclick="showMainMenu()"
+                    style="flex: 1; padding: 0.8rem; font-size: 1rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">home</span> Menu Principal
                 </button>
-                <button class="btn-primary" onclick="restartGame()" style="flex: 1; padding: 0.8rem; font-size: 1rem; box-shadow: none;">
+                <button class="btn-secondary btn-dark-gray" onclick="showAssociationSetup()"
+                    style="flex: 1; padding: 0.8rem; font-size: 1rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">settings</span> Configurações
+                </button>
+                <button class="btn-primary" onclick="restartGame()"
+                    style="flex: 1; padding: 0.8rem; font-size: 1rem; box-shadow: none;">
                     <span class="material-symbols-outlined" style="font-size: 1.2rem;">refresh</span> Recomeçar
                 </button>
             </div>
@@ -167,13 +394,13 @@
                 <span class="material-symbols-outlined">emoji_events</span>
             </div>
             <h2 class="modal-title">Fim de Jogo!</h2>
-            
+
             <div class="final-stats">
                 <p>Itens totais: <strong id="final-total">0</strong></p>
                 <p>Tempo: <strong id="final-time">00:00</strong></p>
                 <p class="text-success">Acertos: <strong id="final-correct">0</strong></p>
                 <p class="text-danger">Erros: <strong id="final-error">0</strong></p>
-                
+
                 <div class="accuracy-circle mt-4 mb-4">
                     <span id="final-accuracy">100%</span>
                     <small>Precisão</small>
@@ -191,4 +418,5 @@
 
     <script src="js/app.js?v=6"></script>
 </body>
+
 </html>

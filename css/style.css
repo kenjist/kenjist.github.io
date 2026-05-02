@@ -111,6 +111,14 @@ body {
     align-items: center;
 }
 
+.flex-70 {
+    flex: 7;
+}
+
+.flex-30 {
+    flex: 3;
+}
+
 .gap-4 { gap: 1rem; }
 
 /* File Upload */
@@ -141,6 +149,7 @@ body {
     border-radius: 16px;
     transition: all 0.3s ease;
     z-index: 1;
+    text-align: center;
 }
 
 .file-input:hover + .file-label {
@@ -419,4 +428,116 @@ body {
     font-size: 0.7rem;
     text-transform: uppercase;
     color: var(--text-muted);
+}
+
+/* Translation Game */
+.translation-display {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+}
+
+.translation-display.jp-text {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 3rem;
+}
+
+.translation-input {
+    width: 100%;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--glass-border);
+    border-radius: 16px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1.5rem;
+    text-align: center;
+    outline: none;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.translation-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(230, 57, 70, 0.2);
+}
+
+.translation-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Main Menu Buttons */
+.menu-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+}
+
+.menu-btn-square {
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+    background: #2a2d35;
+    border: 2px solid var(--primary);
+    box-shadow: none;
+}
+
+.menu-btn-square:hover:not(:disabled) {
+    background: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
+}
+
+.menu-btn-square:disabled {
+    border-color: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+}
+
+.menu-btn-square .material-symbols-outlined {
+    font-size: 3.5rem;
+}
+
+.menu-btn-square .btn-titles-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    align-items: center;
+    width: 100%;
+}
+
+.menu-btn-square span.btn-jp-title {
+    font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.menu-btn-square span.btn-romaji-title {
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    font-weight: 500;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.menu-btn-square span.btn-sub-title {
+    font-size: 0.85rem;
+    font-weight: 400;
+    opacity: 0.8;
 }
